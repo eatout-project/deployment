@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: customer-db
+  template:
+    metadata:
+      labels:
+        component: customer-db
+    spec:
+      volumes:
+        - name: customer-db-storage
+          persistentVolumeClaim:
+            claimName: customer-db-persistent-volume-claim
+      containers:
+        - name: customer-db
+          image: eatout/app:customer-db
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: customer-db-storage
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "yes"

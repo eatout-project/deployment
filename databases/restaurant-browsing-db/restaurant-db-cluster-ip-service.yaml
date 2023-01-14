@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: restaurant-db-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: restaurant-db
+  ports:
+    - port: 3306
+      targetPort: 3306

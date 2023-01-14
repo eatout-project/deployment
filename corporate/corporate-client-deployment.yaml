@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: corporate-client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: eatout-corporate
+  template:
+    metadata:
+      labels:
+        component: eatout-corporate
+    spec:
+      containers:
+        - name: eatout-corporate-client
+          image: eatout/app:eatoutcorporate
+          ports:
+            -  containerPort: 4200
+          env:
+            - name: ACCOUNT_SERVICE_HOST
+              value: account-service-cluster-ip-service
+            - name: ACCOUNT_SERVICE_PORT
+              value: '5002'
+            - name: RESTAURANT_SERVICE_HOST
+              value: restaurant-service-cluster-ip-service
+            - name: RESTAURANT_SERVICE_PORT
+              value: '5000'
+            - name: RESTAURANT_NEW_RESERVATIONS_SOCKET_HOST
+              value: restaurant-new-reservations-socket-cluster-ip-service
+            - name: RESTAURANT-NEW_RESERVATIONS_SOCKET_PORT
+              value: '5011'
+            - name: RESTAURANT_REPLY_SOCKET_HOST
+              value: restaurant-reply-socket-cluster-ip-service
+            - name: RESTAURANT_REPLY_SOCKET_PORT
+              value: '5012'

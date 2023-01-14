@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-login-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: restaurant-login-db
+  template:
+    metadata:
+      labels:
+        component: restaurant-login-db
+    spec:
+      volumes:
+        - name: restaurant-login-db-storage
+          persistentVolumeClaim:
+            claimName: restaurant-login-db-persistent-volume-claim
+      containers:
+        - name: restaurant-login-db
+          image: eatout/app:restaurant-login-db
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: restaurant-login-db-storage
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "yes"

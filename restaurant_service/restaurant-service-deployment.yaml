@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-service-deployment
+  labels:
+    app: restaurant-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: restaurant-service
+  template:
+    metadata:
+      labels:
+        component: restaurant-service
+    spec:
+      containers:
+        - name: restaurant-service
+          image: eatout/app:restaurant-service
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PORT
+              value: '5000'
+            - name: RESTAURANT_DB_HOST
+              value: restaurant-db-cluster-ip-service
+            - name: RESTAURANT_DB_PORT
+              value: '3306'
+            - name: RESTAURANT_DB_USER
+              value: root
+            - name: RESTAURANT_DB
+              value: db
+#          resources:
+#            # You need to specify the metric the HPA object will reference
+#            limits:
+#              cpu: 200m
+#            requests:
+#              cpu: 100m

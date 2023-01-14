@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reservation-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: reservation-db
+  template:
+    metadata:
+      labels:
+        component: reservation-db
+    spec:
+      volumes:
+        - name: reservation-db-storage
+          persistentVolumeClaim:
+            claimName: reservation-db-persistent-volume-claim
+      containers:
+        - name: reservation-db
+          image: eatout/app:reservation-db
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: reservation-db-storage
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "yes"

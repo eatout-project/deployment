@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: status-socket-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: status-socket
+  ports:
+    - port: 5013
+      targetPort: 5013

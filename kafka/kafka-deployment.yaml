@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: kafka
+  template:
+    metadata:
+      labels:
+        component: kafka
+    spec:
+      containers:
+        - name: kafka
+          image: confluentinc/cp-kafka:7.3.0
+          ports:
+            - name: 'external'
+              containerPort: 9092
+            - name: 'internal'
+              containerPort: 29092
+            - name: 'config-port'
+              containerPort: 9999
+          env:
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: "INTERNAL://kafka:19092,EXTERNAL://kafka-cluster-ip-service:9092,DOCKER://host.docker.internal:29092"
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT"
+            - name: KAFKA_INTER_BROKER_LISTENER_NAME
+              value: "INTERNAL"
+            - name: KAFKA_ZOOKEEPER_CONNECT
+              value: "zookeeper-cluster-ip-service:2181"
+            - name: KAFKA_BROKER_ID
+              value: '1'
+            - name: KAFKA_LOG4J_LOGGERS
+              value: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: '1'
+            - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+              value: '1'
+            - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
+              value: '1'
+            - name: KAFKA_JMX_PORT
+              value: '9999'
+            - name: KAFKA_JMX_HOSTNAME
+              value: kafka-cluster-ip-service
+            - name: KAFKA_AUTHORIZER_CLASS_NAME
+              value: "kafka.security.authorizer.AclAuthorizer"
+            - name: KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND
+              value: "true"
+            - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+              value: "true"

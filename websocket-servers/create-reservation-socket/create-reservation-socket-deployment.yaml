@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: create-reservation-socket-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: create-reservation-socket
+  template:
+    metadata:
+      labels:
+        component: create-reservation-socket
+    spec:
+      containers:
+        - name: account-service
+          image: eatout/app:create-reservation-socket
+          ports:
+            - containerPort: 5010
+          env:
+            - name: PORT
+              value: '5010'
+            - name: KAFKA_HOST
+              value:  kafka-cluster-ip-service
+            - name: KAFKA_PORT
+              value: '9092'
