@@ -1,0 +1,145 @@
+apiVersion: networking.k8s.io/v1
+# UPDATE API
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    cert-manager.io/cluster-issuer: letsencrypt
+#    nginx.ingress.kubernetes.io/use-regex: 'true'
+#    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+spec:
+  rules:
+    - host: eatingout.dk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: customer-client-cluster-ip-service
+                port:
+                  number: 80
+    - host: corporate.eatingout.dk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: corporate-client-cluster-ip-service
+                port:
+                  number: 80
+    - host: restaurant-service.eatingout.dk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant-service-cluster-ip-service
+                port:
+                  number: 5000
+    - host: reservation-service.eatingout.dk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: reservation-service-cluster-ip-service
+                port:
+                  number: 5001
+    - host: account-service.eatingout.dk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: account-service-cluster-ip-service
+                port:
+                  number: 5002
+    - host: customer-service.eatingout.dk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: customer-service-cluster-ip-service
+                port:
+                  number: 5004
+    - host: create-reservation.eatingout.dk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: create-reservation-socket-cluster-ip-service
+                port:
+                  number: 5010
+    - host: notify-new-reservation.eatingout.dk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant-new-reservations-socket-cluster-ip-service
+                port:
+                  number: 5011
+    - host: update-reservation-status.eatingout.dk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant-reply-socket-cluster-ip-service
+                port:
+                  number: 5012
+    - host: reservation-status.eatingout.dk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: status-socket-cluster-ip-service
+                port:
+                  number: 5013
+  tls:
+    - hosts:
+        - eatingout.dk
+      secretName: eatingout-secret
+    - hosts:
+        - corporate.eatingout.dk
+      secretName: corporate-eatingout-secret
+    - hosts:
+        - restaurant-service.eatingout.dk
+      secretName: restaurant-service-eatingout-secret
+    - hosts:
+        - reservation-service.eatingout.dk
+      secretName: reservation-service-eatingout-secret
+    - hosts:
+        - account-service.eatingout.dk
+      secretName: account-service-eatingout-secret
+    - hosts:
+        - customer-service.eatingout.dk
+      secretName: customer-service-eatingout-secret
+    - hosts:
+        - create-reservation.eatingout.dk
+      secretName: create-reservation-eatingout-secret
+    - hosts:
+        - notify-new-reservation.eatingout.dk
+      secretName: notify-new-reservation-eatingout-secret
+    - hosts:
+        - update-reservation-status.eatingout.dk
+      secretName: update-reservation-status-eatingout-secret
+    - hosts:
+        - reservation-status.eatingout.dk
+      secretName: reservation-status-eatingout-secret

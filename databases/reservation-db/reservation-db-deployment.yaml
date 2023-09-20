@@ -7,23 +7,37 @@ spec:
   selector:
     matchLabels:
       component: reservation-db
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
         component: reservation-db
     spec:
+      containers:
+        - name: reservation-db
+          image: eatout/app:reservation-db
+          env:
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: reservation-db-secrets
+                  key: MYSQL_ALLOW_EMPTY_PASSWORD
+            - name: MYSQL_ROOT_HOST
+              value: "%"
+          ports:
+            - containerPort: 3306
+          resources:
+            requests:
+              cpu: "5m"
+              memory: "350Mi"
+            limits:
+              cpu: "10m"
+              memory: "400Mi"
+          volumeMounts:
+            - name: reservation-db-storage
+              mountPath: /var/lib/mysql
       volumes:
         - name: reservation-db-storage
           persistentVolumeClaim:
             claimName: reservation-db-persistent-volume-claim
-      containers:
-        - name: reservation-db
-          image: eatout/app:reservation-db
-          ports:
-            - containerPort: 3306
-          volumeMounts:
-            - name: reservation-db-storage
-              mountPath: /var/lib/mysql
-          env:
-            - name: MYSQL_ALLOW_EMPTY_PASSWORD
-              value: "yes"

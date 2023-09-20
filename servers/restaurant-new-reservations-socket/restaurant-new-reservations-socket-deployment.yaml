@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-new-reservations-socket-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: restaurant-new-reservations-socket
+  template:
+    metadata:
+      labels:
+        component: restaurant-new-reservations-socket
+    spec:
+      containers:
+        - name: restaurant-new-reservations-socket
+          image: eatout/app:restaurant-new-reservations-socket-azure-test-image
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5011
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "100Mi"
+            limits:
+              cpu: "20m"
+              memory: "200Mi"
+          env:
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-new-reservations-socket-secrets
+                  key: PORT
+            - name: KAFKA_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-new-reservations-socket-secrets
+                  key: KAFKA_HOST
+            - name: KAFKA_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-new-reservations-socket-secrets
+                  key: KAFKA_PORT

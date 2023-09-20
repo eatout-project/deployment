@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: corporate-client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: eatout-corporate
+  template:
+    metadata:
+      labels:
+        component: eatout-corporate
+    spec:
+      containers:
+        - name: eatout-corporate-client
+          image: eatout/app:corporate-client-azure-test-image
+          imagePullPolicy: Always
+          ports:
+            -  containerPort: 80
+          resources:
+            requests:
+              cpu: "1m"
+              memory: "5Mi"
+            limits:
+              cpu: "2m"
+              memory: "50Mi"

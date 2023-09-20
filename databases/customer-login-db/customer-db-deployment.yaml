@@ -7,23 +7,38 @@ spec:
   selector:
     matchLabels:
       component: customer-db
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
         component: customer-db
     spec:
+      containers:
+        - name: customer-db
+          image: eatout/app:customer-db
+          env:
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: customer-db-secrets
+                  key: MYSQL_ALLOW_EMPTY_PASSWORD
+            - name: MYSQL_ROOT_HOST
+              value: "%"
+          ports:
+            - containerPort: 3306
+              name: mysql
+          resources:
+            requests:
+              cpu: "5m"
+              memory: "350Mi"
+            limits:
+              cpu: "10m"
+              memory: "400Mi"
+          volumeMounts:
+            - name: customer-db-storage
+              mountPath: /var/lib/mysql
       volumes:
         - name: customer-db-storage
           persistentVolumeClaim:
             claimName: customer-db-persistent-volume-claim
-      containers:
-        - name: customer-db
-          image: eatout/app:customer-db
-          ports:
-            - containerPort: 3306
-          volumeMounts:
-            - name: customer-db-storage
-              mountPath: /var/lib/mysql
-          env:
-            - name: MYSQL_ALLOW_EMPTY_PASSWORD
-              value: "yes"

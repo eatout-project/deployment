@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-reply-socket-deployment-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: restaurant-reply-socket
+  template:
+    metadata:
+      labels:
+        component: restaurant-reply-socket
+    spec:
+      containers:
+        - name: restaurant-reply-socket
+          image: eatout/app:restaurant-reply-socket
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5012
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "100Mi"
+            limits:
+              cpu: "20m"
+              memory: "200Mi"
+          env:
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-reply-socket-secrets
+                  key: PORT
+            - name: KAFKA_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-reply-socket-secrets
+                  key: KAFKA_HOST
+            - name: KAFKA_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-reply-socket-secrets
+                  key: KAFKA_PORT

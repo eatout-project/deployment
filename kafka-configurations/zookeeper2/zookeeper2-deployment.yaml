@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper2-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: zookeeper2-service
+  template:
+    metadata:
+      labels:
+        component: zookeeper2-service
+    spec:
+      containers:
+        - name: zookeeper
+          image: confluentinc/cp-zookeeper:7.3.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 2181
+          resources:
+            requests:
+              cpu: "2m"
+              memory: "350Mi"
+            limits:
+              cpu: "6m"
+              memory: "450Mi"
+          env:
+            - name: ZOOKEEPER_CLIENT_PORT
+              value: "2181"
+            - name: ZOOKEEPER_SERVER_ID
+              value: "1"
+            - name: ZOOKEEPER_SERVERS
+              value: "zoo1:2888:3888"

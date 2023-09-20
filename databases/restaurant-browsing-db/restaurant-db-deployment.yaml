@@ -12,18 +12,30 @@ spec:
       labels:
         component: restaurant-db
     spec:
+      containers:
+        - name: restaurant-db
+          image: eatout/app:restaurant-db
+          env:
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-db-secrets
+                  key: MYSQL_ALLOW_EMPTY_PASSWORD
+            - name: MYSQL_ROOT_HOST
+              value: "%"
+          ports:
+            - containerPort: 3306
+          resources:
+            requests:
+              cpu: "5m"
+              memory: "350Mi"
+            limits:
+              cpu: "10m"
+              memory: "400Mi"
+          volumeMounts:
+            - name: restaurant-db-storage
+              mountPath: /var/lib/mysql
       volumes:
         - name: restaurant-db-storage
           persistentVolumeClaim:
             claimName: restaurant-db-persistent-volume-claim
-      containers:
-        - name: restaurant-db
-          image: eatout/app:restaurant-db
-          ports:
-            - containerPort: 3306
-          volumeMounts:
-            - name: restaurant-db-storage
-              mountPath: /var/lib/mysql
-          env:
-            - name: MYSQL_ALLOW_EMPTY_PASSWORD
-              value: "yes"

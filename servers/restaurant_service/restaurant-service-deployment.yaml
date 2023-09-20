@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: restaurant-service
+  template:
+    metadata:
+      labels:
+        component: restaurant-service
+    spec:
+      containers:
+        - name: restaurant-service
+          image: eatout/app:restaurant-service-azure-test-image
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              cpu: "1m"
+              memory: "50Mi"
+            limits:
+              cpu: "5m"
+              memory: "100Mi"
+          env:
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-service-secrets
+                  key: PORT
+            - name: RESTAURANT_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-service-secrets
+                  key: RESTAURANT_DB_HOST
+            - name: RESTAURANT_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-service-secrets
+                  key: RESTAURANT_DB_PORT
+            - name: RESTAURANT_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-service-secrets
+                  key: RESTAURANT_DB_USER
+            - name: RESTAURANT_DB
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-service-secrets
+                  key: RESTAURANT_DB

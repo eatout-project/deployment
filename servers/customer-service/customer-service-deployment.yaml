@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: customer-service
+  template:
+    metadata:
+      labels:
+        component: customer-service
+    spec:
+      containers:
+        - name: eatout-customer-service
+          image: eatout/app:customer-service-azure-test-image
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5004
+          resources:
+            requests:
+              cpu: "1m"
+              memory: "50Mi"
+            limits:
+              cpu: "5m"
+              memory: "100Mi"
+          env:
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secrets
+                  key: PORT
+            - name: CUSTOMER_LOGIN_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secrets
+                  key: CUSTOMER_LOGIN_DB_HOST
+            - name: CUSTOMER_LOGIN_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secrets
+                  key: CUSTOMER_LOGIN_DB_PORT
+            - name: CUSTOMER_LOGIN_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secrets
+                  key: CUSTOMER_LOGIN_DB_USER
+            - name: CUSTOMER_LOGIN_DB
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secrets
+                  key: CUSTOMER_LOGIN_DB

@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reservation-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: reservation-service
+  template:
+    metadata:
+      labels:
+        component: reservation-service
+    spec:
+      containers:
+        - name: reservation-service
+          image: eatout/app:reservation-service-azure-test-image
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5001
+          resources:
+            requests:
+              cpu: "1m"
+              memory: "50Mi"
+            limits:
+              cpu: "5m"
+              memory: "100Mi"
+          env:
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                  name: reservation-service-secrets
+                  key: PORT
+            - name: RESERVATION_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: reservation-service-secrets
+                  key: RESERVATION_DB_HOST
+            - name: RESERVATION_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: reservation-service-secrets
+                  key: RESERVATION_DB_PORT
+            - name: RESERVATION_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: reservation-service-secrets
+                  key: RESERVATION_DB_USER
+            - name: RESERVATION_DB
+              valueFrom:
+                secretKeyRef:
+                  name: reservation-service-secrets
+                  key: RESERVATION_DB

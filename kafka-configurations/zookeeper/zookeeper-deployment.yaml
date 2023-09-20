@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: zookeeper
+  template:
+    metadata:
+      labels:
+        component: zookeeper
+    spec:
+      containers:
+        - name: zookeeper
+          image: confluentinc/cp-zookeeper:7.3.0
+          ports:
+            - containerPort: 2181
+          env:
+            - name: ZOOKEEPER_CLIENT_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: zookeeper-secrets
+                  key: PORT
+            - name: ZOOKEEPER_SERVER_ID
+              valueFrom:
+                secretKeyRef:
+                  name: zookeeper-secrets
+                  key: ZOOKEEPER_SERVER_ID
+            - name: ZOOKEEPER_SERVERS
+              valueFrom:
+                secretKeyRef:
+                  name: zookeeper-secrets
+                  key: ZOOKEEPER_SERVERS

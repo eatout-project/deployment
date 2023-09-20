@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: create-reservation-socket-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: create-reservation-socket
+  template:
+    metadata:
+      labels:
+        component: create-reservation-socket
+    spec:
+      containers:
+        - name: account-service
+          image: eatout/app:create-reservation-socket-azure-test-image
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5010
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "100Mi"
+            limits:
+              cpu: "20m"
+              memory: "200Mi"
+          env:
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                  name: create-reservation-socket-secrets
+                  key: PORT
+            - name: KAFKA_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: create-reservation-socket-secrets
+                  key: KAFKA_HOST
+            - name: KAFKA_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: create-reservation-socket-secrets
+                  key: KAFKA_PORT
